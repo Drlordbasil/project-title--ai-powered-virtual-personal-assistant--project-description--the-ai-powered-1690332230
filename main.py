@@ -1,11 +1,12 @@
+import smtplib
+import webbrowser
+import datetime
+import pyttsx3
+import speech_recognition as sr
 Here's an improved version of the Python program:
 
 ```python
-import speech_recognition as sr
-import pyttsx3
-import datetime
-import webbrowser
-import smtplib
+
 
 class Assistant:
     def __init__(self):
@@ -79,7 +80,8 @@ class Assistant:
             subject = self.listen()
             self.speak("What should be the body of the email?")
             body = self.listen()
-            self.send_email(recipient, subject, body, sender_email, sender_password)
+            self.send_email(recipient, subject, body,
+                            sender_email, sender_password)
         elif "quit" in command:
             self.speak("Goodbye!")
             exit()
@@ -93,17 +95,18 @@ class Assistant:
             if command:
                 self.process_command(command, sender_email, sender_password)
 
+
 if __name__ == "__main__":
     assistant = Assistant()
     assistant.run("your_email@example.com", "your_email_password")
 ```
 
 Here are the improvements made:
-1. Converted the program into a class-based structure to encapsulate functionality and improve code organization.
+1. Converted the program into a class -based structure to encapsulate functionality and improve code organization.
 2. Improved error handling in the `listen()` function to handle various speech recognition errors and provide appropriate error messages.
-3. Used a `with` statement when sending emails with `smtplib` to ensure proper cleanup of the SMTP connection.
+3. Used a `with ` statement when sending emails with `smtplib` to ensure proper cleanup of the SMTP connection.
 4. Encouraged passing email sender credentials as arguments to the `run()` method instead of hardcoding them in the program for better security and flexibility.
-   
+
 Additionally, you may consider further improvements such as:
 1. Adding exception handling for potential errors during web browser opening and file execution.
 2. Implementing additional features like playing music, setting reminders, or fetching information from APIs.
