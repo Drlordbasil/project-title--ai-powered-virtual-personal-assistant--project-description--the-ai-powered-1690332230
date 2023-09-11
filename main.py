@@ -1,116 +1,39 @@
-import smtplib
-import webbrowser
-import datetime
-import pyttsx3
-import speech_recognition as sr
-Here's an improved version of the Python program:
+* Commit 1: Refactor the script to use a class -based structure for better organization and encapsulation of functionality.
+- Create a new file called `assistant.py`.
+- Move the existing code into a class called `Assistant`.
+- Add an `__init__` method to initialize the `recognizer` and `microphone` objects.
+- Move the `listen`, `speak`, `greet_user`, `send_email`, `process_command`, and `run` methods into the class .
+- Remove the `import ` statements for `smtplib`, `webbrowser`, `datetime`, `pyttsx3`, and `speech_recognition`.
+- Update the `if __name__ == "__main__"` block to instantiate an instance of the `Assistant` class and call the `run` method.
 
-```python
+* Commit 2: Improve error handling in the `listen` method.
+- Wrap the code inside the `with self.microphone as source` block in a try -except block.
+- Catch the `sr.UnknownValueError` exception and print a helpful error message.
+- Catch the `sr.RequestError` exception and print a helpful error message.
 
+* Commit 3: Use a `with ` statement when sending emails with `smtplib` for proper cleanup.
+- Wrap the `smtplib.SMTP` connection in a `with ` statement.
+    - Move the existing code that logs in , sends the email, and closes the connection inside the `with` block.
 
-class Assistant:
-    def __init__(self):
-        self.recognizer = sr.Recognizer()
-        self.microphone = sr.Microphone()
+* Commit 4: Encourage passing email sender credentials as arguments to the `run` method instead of hardcoding them.
+- Remove the hardcoded email and password from the `run` method arguments.
+- Update the `run` method to accept `sender_email` and `sender_password` as arguments.
+- Replace the hardcoded email and password in the `run` method call in the `__main__` block with actual email and password values.
 
-    def listen(self):
-        with self.microphone as source:
-            print("Listening...")
-            self.recognizer.pause_threshold = 1
-            audio = self.recognizer.listen(source)
+* Commit 5: Add exception handling for web browser opening and file execution.
+- Wrap the `webbrowser.open` and `os.startfile` calls in try -except blocks.
+- Catch any exceptions that may occur and print a helpful error message.
 
-        try:
-            print("Recognizing...")
-            query = self.recognizer.recognize_google(audio, language='en')
-            print(f"User said: {query}\n")
-            return query.lower()
-        except sr.UnknownValueError:
-            print("I'm sorry, I didn't catch that. Can you please repeat?")
-        except sr.RequestError:
-            print("Sorry, I am unable to access the speech recognition service.")
-        return None
+* Commit 6: Implement additional features like playing music, setting reminders, or fetching information from APIs.
+- Add new methods to the `Assistant` class for each additional feature.
+- Implement the functionality for each feature in its respective method.
 
-    def speak(self, text):
-        engine = pyttsx3.init()
-        engine.say(text)
-        engine.runAndWait()
+* Commit 7: Create separate functions or methods for each command in the `process_command` method.
+- Refactor the `process_command` method by creating separate methods for each command.
+- Update the `process_command` method to call the appropriate method based on the command.
 
-    def greet_user(self):
-        hour = int(datetime.datetime.now().hour)
-
-        if hour < 12:
-            self.speak("Good morning!")
-        elif 12 <= hour < 18:
-            self.speak("Good afternoon!")
-        else:
-            self.speak("Good evening!")
-
-        self.speak("How can I assist you today?")
-
-    def send_email(self, to, subject, body, sender_email, sender_password):
-        try:
-            with smtplib.SMTP('smtp.gmail.com', 587) as server:
-                server.ehlo()
-                server.starttls()
-                server.login(sender_email, sender_password)
-                message = f"Subject: {subject}\n\n{body}"
-                server.sendmail(sender_email, to, message)
-            self.speak("Email has been sent successfully!")
-        except Exception as e:
-            print(str(e))
-            self.speak("Sorry, I am unable to send the email at the moment.")
-
-    def process_command(self, command, sender_email, sender_password):
-        if "open" in command:
-            if "browser" in command:
-                webbrowser.open("https://www.google.com")
-            elif "calculator" in command:
-                os.startfile("calc.exe")
-            elif "notepad" in command:
-                os.startfile("notepad.exe")
-            else:
-                self.speak("Sorry, I don't know how to open that application.")
-        elif "tell me the time" in command:
-            current_time = datetime.datetime.now().strftime("%H:%M")
-            self.speak(f"The current time is {current_time}")
-        elif "send email" in command:
-            self.speak("To whom should I send the email?")
-            recipient = self.listen()
-            self.speak("What should be the subject?")
-            subject = self.listen()
-            self.speak("What should be the body of the email?")
-            body = self.listen()
-            self.send_email(recipient, subject, body,
-                            sender_email, sender_password)
-        elif "quit" in command:
-            self.speak("Goodbye!")
-            exit()
-        else:
-            self.speak("Sorry, I don't understand that command.")
-
-    def run(self, sender_email, sender_password):
-        self.greet_user()
-        while True:
-            command = self.listen()
-            if command:
-                self.process_command(command, sender_email, sender_password)
-
-
-if __name__ == "__main__":
-    assistant = Assistant()
-    assistant.run("your_email@example.com", "your_email_password")
-```
-
-Here are the improvements made:
-1. Converted the program into a class -based structure to encapsulate functionality and improve code organization.
-2. Improved error handling in the `listen()` function to handle various speech recognition errors and provide appropriate error messages.
-3. Used a `with ` statement when sending emails with `smtplib` to ensure proper cleanup of the SMTP connection.
-4. Encouraged passing email sender credentials as arguments to the `run()` method instead of hardcoding them in the program for better security and flexibility.
-
-Additionally, you may consider further improvements such as:
-1. Adding exception handling for potential errors during web browser opening and file execution.
-2. Implementing additional features like playing music, setting reminders, or fetching information from APIs.
-3. Creating separate functions or methods for each command in the `process_command()` method to improve readability and maintainability.
-4. Implementing error handling for the email sending process, such as validating email addresses and checking for network connectivity.
+* Commit 8: Implement error handling for the email sending process.
+- Add additional error handling code to validate email addresses, check network connectivity, and handle other potential errors.
+- Print helpful error messages for each specific error scenario.
 
 Remember to periodically update the email sending mechanism to use secure authentication methods if applicable.
